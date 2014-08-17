@@ -131,3 +131,25 @@ ggplot(i.steps.per.date, aes(x=steps)) +
 ```
 
 ![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8.png) 
+
+
+### Are there differences in activity patterns between weekdays and weekends?
+
+Assuming that the data comes from a user who observes weekends on Saturdays and Sundays, I set on to answer this question.
+
+
+```r
+# Marking the weekend and weekday observations as so
+weekends <- weekdays(data$date) %in% c('Saturday', 'Sunday')
+data[weekends, 'daytype'] <- factor('weekend', levels=c('weekend', 'weekday'))
+data[!weekends, 'daytype'] <- factor('weekday', levels=c('weekend', 'weekday'))
+
+# Computing the average steps taken per time interval and day type
+molten <- melt(data, id.vars=c('interval', 'daytype', 'date'))
+average.steps.by.interval.and.daytype <- dcast(molten, interval + daytype ~ variable, fun.aggregate=mean, na.rm=T)
+
+# Plotting that for comparison
+qplot(interval, steps, data=average.steps.by.interval.and.daytype, facets=~daytype, geom='line', xlab='Time of day', ylab='Average number of steps')
+```
+
+![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9.png) 
