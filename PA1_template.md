@@ -106,7 +106,7 @@ str(i.data)
 ##  $ interval: int  0 5 10 15 20 25 30 35 40 45 ...
 ```
 
-Comparing the histograms of the total number of steps per day for the raw data (in blue) and the interpolated data (in green) showes that there aren't a lot of gained knowledge from this step. The two means (in red) and the two medians almost overlap.
+Comparing the histograms of the total number of steps per day for the raw data (in blue) and the interpolated data (in green) showes that there isn't a lot of gained knowledge from this step. The two means (the x-intercepts in red) and the two medians (the x-intercepts in green) almost overlap.
 
 
 ```r

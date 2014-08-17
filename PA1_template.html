@@ -125,7 +125,7 @@ str(i.data)</code></pre>
 ##  $ steps   : num  1.717 0.3396 0.1321 0.1509 0.0755 ...
 ##  $ date    : Date, format: &quot;2012-10-01&quot; &quot;2012-10-01&quot; ...
 ##  $ interval: int  0 5 10 15 20 25 30 35 40 45 ...</code></pre>
-<p>Comparing the histograms of the total number of steps per day for the raw data (in blue) and the interpolated data (in green) showes that there aren’t a lot of gained knowledge from this step. The two means (in red) and the two medians almost overlap.</p>
+<p>Comparing the histograms of the total number of steps per day for the raw data (in blue) and the interpolated data (in green) showes that there isn’t a lot of gained knowledge from this step. The two means (the x-intercepts in red) and the two medians (the x-intercepts in green) almost overlap.</p>
 <pre class="r"><code>molten &lt;- melt(i.data, id.vars=c('date'))
 i.steps.per.date &lt;- dcast(molten, date ~ variable, fun.aggregate=sum, na.rm=T)
 i.mean.steps.per.day &lt;- mean(i.steps.per.date$steps)

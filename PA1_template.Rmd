@@ -81,7 +81,7 @@ for (i in which(is.na(i.data$steps))) {
 str(i.data)
 ```
 
-Comparing the histograms of the total number of steps per day for the raw data (in blue) and the interpolated data (in green) showes that there aren't a lot of gained knowledge from this step. The two means (in red) and the two medians almost overlap.
+Comparing the histograms of the total number of steps per day for the raw data (in blue) and the interpolated data (in green) showes that there isn't a lot of gained knowledge from this step. The two means (the x-intercepts in red) and the two medians (the x-intercepts in green) almost overlap.
 
 ```{r, fig.height=3}
 molten <- melt(i.data, id.vars=c('date'))
