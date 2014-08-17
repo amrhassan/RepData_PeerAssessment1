@@ -1,20 +1,67 @@
-# Reproducible Research: Peer Assessment 1
+---
+title: "Reproducible Research Assignment 1"
+author: "Amr Hassan"
+---
 
+For this assignment I perform data analysis on the output of an activity
+monitoring device of one person over the course of 61 days.
 
-## Loading and preprocessing the data
+### The Source Raw Data
+The data for these analyses are obtained from the URL: <https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip> on August 16, 2014. The checksum of the file used for this report is `"61e0c1f8c4a736ff1ab0f8863344b301"`.
+```{r}
+# Downloading the source raw data and verifying its authenticity
+library(tools)
+if (!file.exists('activity.zip')) {
+  download.file('https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip', 'activity.zip', method="curl")
+  if (md5sum('activity.zip') != "61e0c1f8c4a736ff1ab0f8863344b301") {
+    warning("The file downloaded differs from the original file on which the report's analysis were performed.")
+  }
+}
+```
 
+### Loading and Preprocessing the Raw Data
+The data is a Zip-compressed CSV file in its raw format. I load it into
+memory in order to perform my analysis first.
+```{r}
+data <- read.csv(unz('activity.zip', 'activity.csv'))
+data$date <- as.Date(data$date)
+str(data)
+```
 
+### What is mean total number of steps taken per day?
+The following is a histogram of the number of steps taken per day over
+the monitoring period.
+```{r, fig.height=3}
+library(reshape2)
+library(ggplot2)
+molten <- melt(data, id.vars=c('date'))
+unmelted <- dcast(molten, date ~ variable, fun.aggregate=sum, na.rm=T)
+mean.steps.per.day <- mean(unmelted$steps)
+median.steps.per.day <- median(unmelted$steps)
+ggplot(unmelted, aes(x=steps)) + 
+  geom_histogram(binwidth=(max(unmelted$steps) - min(unmelted$steps))/30, 
+                 fill="white", colour="black") +
+  xlab('Total Number of Steps on a Single Day') + ylab('Frequency') + 
+  geom_vline(aes(xintercept=mean.steps.per.day), linetype='dashed', colour='red') +
+  geom_vline(aes(xintercept=median.steps.per.day), colour='green', linetype='dashed')
+```
 
-## What is mean total number of steps taken per day?
+The **mean** and **median** statistics of the total number of steps on a single day are **`r mean.steps.per.day`** and **`r median.steps.per.day`** respectively.
 
+### What is the average daily activity pattern?
+In order to find the average daily activity pattern, I plot the average number of steps taken at each time of day against the times of the day.
+```{r, fig.height=4}
+molten <- melt(data, id.vars=c('interval', 'date'))
+average.steps.per.interval <- dcast(molten, interval ~ variable, fun.aggregate=mean, na.rm=T)[,c('interval', 'steps')]
+qplot(interval, steps, data=average.steps.per.interval, geom="line", xlab="Time of day", ylab="Average Number of Steps")
+```
 
+```{r}
+maximum.activity.interval.i <- which.max(average.steps.per.interval$steps)
+t <- average.steps.per.interval$interval[maximum.activity.interval.i];
+t <- sprintf("%04d", t);
+t <- gsub('([0-9]{2})([0-9]{2})', '\\1:\\2', t)
+```
+The maximum activity is at **`r t`**, based on the average number of steps taken across the monitoring period.
 
-## What is the average daily activity pattern?
-
-
-
-## Imputing missing values
-
-
-
-## Are there differences in activity patterns between weekdays and weekends?
+### 
