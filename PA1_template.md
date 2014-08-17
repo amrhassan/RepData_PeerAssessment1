@@ -1,7 +1,5 @@
----
-title: "Reproducible Research Assignment 1"
-author: "Amr Hassan"
----
+Reproducible Research Assignment 1
+==================================
 
 For this assignment I perform data analysis on the output of an activity
 monitoring device of one person over the course of 61 days.
