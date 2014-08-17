@@ -45,11 +45,12 @@ the monitoring period.
 library(reshape2)
 library(ggplot2)
 molten <- melt(data, id.vars=c('date'))
-unmelted <- dcast(molten, date ~ variable, fun.aggregate=sum, na.rm=T)
-mean.steps.per.day <- mean(unmelted$steps)
-median.steps.per.day <- median(unmelted$steps)
-ggplot(unmelted, aes(x=steps)) + 
-  geom_histogram(binwidth=(max(unmelted$steps) - min(unmelted$steps))/30, 
+steps.per.date <- dcast(molten, date ~ variable, fun.aggregate=sum, na.rm=T)
+mean.steps.per.day <- mean(steps.per.date$steps)
+median.steps.per.day <- median(steps.per.date$steps)
+
+ggplot(steps.per.date, aes(x=steps)) + 
+  geom_histogram(binwidth=(max(steps.per.date$steps) - min(steps.per.date$steps))/30, 
                  fill="white", colour="black") +
   xlab('Total Number of Steps on a Single Day') + ylab('Frequency') + 
   geom_vline(aes(xintercept=mean.steps.per.day), linetype='dashed', colour='red') +
@@ -80,4 +81,53 @@ t <- gsub('([0-9]{2})([0-9]{2})', '\\1:\\2', t)
 ```
 The maximum activity is at **08:35**, based on the average number of steps taken across the monitoring period.
 
-### 
+### Imputing Missing Values
+
+
+```r
+incomplete.obs.count <- sum(is.na(data$steps))
+```
+
+There are **2304** observations with missing values in the raw data.
+
+I interpolate the missing step-count data by filling it with the average number of steps for the time interval at which observation is missing data.
+
+
+```r
+i.data <- data  # interpolated data
+for (i in which(is.na(i.data$steps))) {
+  i.data[i, 'steps'] <- average.steps.per.interval[i, 'steps']
+}
+str(i.data)
+```
+
+```
+## 'data.frame':	17568 obs. of  3 variables:
+##  $ steps   : num  1.717 0.3396 0.1321 0.1509 0.0755 ...
+##  $ date    : Date, format: "2012-10-01" "2012-10-01" ...
+##  $ interval: int  0 5 10 15 20 25 30 35 40 45 ...
+```
+
+Comparing the histograms of the total number of steps per day for the raw data (in blue) and the interpolated data (in green) showes that there aren't a lot of gained knowledge from this step. The two means (in red) and the two medians almost overlap.
+
+
+```r
+molten <- melt(i.data, id.vars=c('date'))
+i.steps.per.date <- dcast(molten, date ~ variable, fun.aggregate=sum, na.rm=T)
+i.mean.steps.per.day <- mean(i.steps.per.date$steps)
+i.median.steps.per.day <- median(i.steps.per.date$steps)
+
+ggplot(i.steps.per.date, aes(x=steps)) + 
+  geom_histogram(binwidth=(max(i.steps.per.date$steps) - min(i.steps.per.date$steps))/30, 
+                 fill='blue', colour="black", alpha=0.5) +
+  xlab('Total Number of Steps on a Single Day') + ylab('Frequency') + 
+  geom_vline(aes(xintercept=i.mean.steps.per.day), linetype='dashed', colour='red') +
+  geom_vline(aes(xintercept=i.median.steps.per.day), colour='green', linetype='dashed') +
+  
+  geom_histogram(data=steps.per.date, binwidth=(max(steps.per.date$steps) - min(steps.per.date$steps))/30, 
+                 fill="green", colour="black", alpha=0.5) +
+  geom_vline(aes(xintercept=mean.steps.per.day), linetype='dashed', colour='red') +
+  geom_vline(aes(xintercept=median.steps.per.day), colour='green', linetype='dashed')
+```
+
+![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8.png) 
