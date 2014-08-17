@@ -133,7 +133,7 @@ ggplot(i.steps.per.date, aes(x=steps)) +
 
 ### Are there differences in activity patterns between weekdays and weekends?
 
-Assuming that the data comes from a user who observes weekends on Saturdays and Sundays, I set on to answer this question.
+Assuming that the data comes from a user who observes weekends on Saturdays and Sundays, I set out to answer this question.
 
 
 ```r
@@ -151,3 +151,6 @@ qplot(interval, steps, data=average.steps.by.interval.and.daytype, facets=~dayty
 ```
 
 ![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9.png) 
+
+
+There is a more noticeable spike in activity on weekdays at around **8:30** which is the overall most active time of the day as is discovered earlier in the report.
